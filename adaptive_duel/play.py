@@ -9,7 +9,7 @@ JUMP_SPEED = 550
 GROUND_HEIGHT = 10
 
 BULLET_SPEED = 1000
-BULLETS_COUNT = 100
+BULLETS_COUNT = 10
 
 
 class Character:
@@ -22,6 +22,7 @@ class Character:
         self.on_ground = False
         self.facing = 1
 
+        self.ammo = BULLETS_COUNT
         self.bullets = []
         
     def update(self, dt, direction, jump_request):
@@ -49,13 +50,17 @@ class Character:
 
         self.rect.topleft = self.position
 
+        self.bullets = [bullet for bullet in self.bullets if bullet.exist]
+
     def draw(self, surface):
         pygame.draw.rect(surface, self.color, self.rect)
 
     def shoot(self):
 
-        bullet = Bullet(self.rect.center, self.facing, (10, 5), "orange")
-        self.bullets.append(bullet)
+        if self.ammo > 0:
+            bullet = Bullet(self.rect.center, self.facing, (10, 5), "orange")
+            self.bullets.append(bullet)
+            self.ammo -= 1
 
 
 class Bullet:
@@ -115,7 +120,7 @@ if __name__ == "__main__":
                 if event.key == pygame.K_SPACE:
                     jump_request = True
 
-                if event.key == pygame.K_j and len(c_1.bullets) < BULLETS_COUNT:
+                if event.key == pygame.K_j:
                     c_1.shoot()
 
         screen.fill((30, 30, 40))
@@ -146,7 +151,6 @@ if __name__ == "__main__":
 
         c_1.draw(screen)
         # c_2.draw(screen)
-
 
         pygame.display.flip()  # updates display
 
